@@ -91,12 +91,23 @@ struct {{APP_NAME}}Alert: View {
                     .buttonStyle(.appSecondaryExpanded)
                 }
 
-                Button {
-                    primaryAction.action()
-                } label: {
-                    Text(primaryAction.label)
+                // Separate buttons per style — Swift can't unify different
+                // ButtonStyle concrete types across a ternary.
+                if primaryAction.role == .destructive {
+                    Button {
+                        primaryAction.action()
+                    } label: {
+                        Text(primaryAction.label)
+                    }
+                    .buttonStyle(.appDestructiveExpanded)
+                } else {
+                    Button {
+                        primaryAction.action()
+                    } label: {
+                        Text(primaryAction.label)
+                    }
+                    .buttonStyle(.appPrimaryExpanded)
                 }
-                .buttonStyle(primaryAction.role == .destructive ? .appDestructiveExpanded : .appPrimaryExpanded)
             }
             .padding(.top, 8)
         }
