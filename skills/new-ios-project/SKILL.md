@@ -60,7 +60,9 @@ Xcode places `$2App.swift` at `$1/$2/$2App.swift`. Move it to `$1/$2/App/$2App.s
 
 ### 3. Drop in template files
 
-Copy the following from `references/templates/` into the project, substituting `{{APP_NAME}}` with `$2`:
+Copy the following from `references/templates/` into the project, substituting `{{APP_NAME}}` with `$2` in **both file contents and file names**. Some templates have `{{APP_NAME}}` in the filename itself — rename accordingly when copying.
+
+**App shell + error taxonomy:**
 
 | Template | Destination |
 |---|---|
@@ -74,9 +76,35 @@ Copy the following from `references/templates/` into the project, substituting `
 | `SheetPreview.swift` | `$1/$2/DevHelpers/SheetPreview.swift` |
 | `CLAUDE.md` | `$1/CLAUDE.md` |
 
+**Design vocabulary:**
+
+| Template | Destination |
+|---|---|
+| `Design/Color+{{APP_NAME}}Tokens.swift` | `$1/$2/Shared/Design/Color+{{APP_NAME}}Tokens.swift` |
+| `Design/DesignTokens.swift` | `$1/$2/Shared/Design/DesignTokens.swift` |
+| `Design/ButtonStyles.swift` | `$1/$2/Shared/Design/ButtonStyles.swift` |
+| `Design/{{APP_NAME}}CardModifier.swift` | `$1/$2/Shared/Design/{{APP_NAME}}CardModifier.swift` |
+| `Design/FontExtension.swift` | `$1/$2/Shared/Extensions/FontExtension.swift` |
+
+**Feedback (snackbar / alert / loading / skeleton):**
+
+| Template | Destination |
+|---|---|
+| `Feedback/SnackbarMessage.swift` | `$1/$2/Shared/Components/Feedback/SnackbarMessage.swift` |
+| `Feedback/SnackbarView.swift` | `$1/$2/Shared/Components/Feedback/SnackbarView.swift` |
+| `Feedback/AlertMessage.swift` | `$1/$2/Shared/Components/Feedback/AlertMessage.swift` |
+| `Feedback/ErrorAlertModifier.swift` | `$1/$2/Shared/Components/Feedback/ErrorAlertModifier.swift` |
+| `Feedback/{{APP_NAME}}Alert.swift` | `$1/$2/Shared/Components/Feedback/{{APP_NAME}}Alert.swift` |
+| `Feedback/ErrorPresenter.swift` | `$1/$2/Shared/Components/Feedback/ErrorPresenter.swift` |
+| `Feedback/LoadingState.swift` | `$1/$2/Shared/Components/Feedback/LoadingState.swift` |
+| `Feedback/SkeletonView.swift` | `$1/$2/Shared/Components/Feedback/SkeletonView.swift` |
+
 Substitution rules:
-- Replace `{{APP_NAME}}` everywhere (including type names: `{{APP_NAME}}Error` → `BreezeError`).
-- Template files use `.swift` extension already; no rename needed beyond `{{APP_NAME}}` swaps in file names.
+- Replace `{{APP_NAME}}` everywhere (including type names: `{{APP_NAME}}Error` → `BreezeError`, `{{APP_NAME}}Alert` → `BreezeAlert`, `{{APP_NAME}}CardModifier` → `BreezeCardModifier`).
+- Also rename files whose names contain `{{APP_NAME}}` (e.g. `{{APP_NAME}}Alert.swift` → `BreezeAlert.swift`).
+- Leave `Color.theme.*`, `Font.app*`, and `.appPrimary`/`.appCard(…)` identifiers as-is — those are the shared convention across all Fanxie apps.
+
+**Note on seed localization keys:** several templates reference keys like `button.cancel`, `button.retry`, `button.ok`, `button.confirm`, `alert.error.title`, `alert.error.generic`, `common.loading`, `common.loading.with_message`, `prompt.optional`, `picker.mode`. Xcode's String Catalog auto-extracts these on first build. Nothing to do at scaffold time.
 
 ### 4. Create Localizable.xcstrings
 
@@ -98,13 +126,13 @@ Tell the user to add the shared package via Xcode:
 
 1. `File → Add Package Dependencies…`
 2. URL: `https://github.com/fanxie-lab/fanxie-ios-core-package`
-3. Pick the products needed:
-   - `FanxieCore` — always add (haptics, utilities, extensions)
-   - `FanxieDesign` — add unless the app has a fully custom design system
-   - `FanxieFeedback` — add if the app shows snackbars/errors/loading states
-   - `FanxieComponents` — add if the app needs SafariView, CachedAsyncImage, FlowLayout, PillTabBar, or common controls
+3. Pick the products:
+   - `FanxieCore` — always add (haptics, utilities, extensions, `GlassEffectExtension`). Required by the `{{APP_NAME}}CardModifier` template, so the project won't compile without it.
+   - `FanxieComponents` — add if the app needs `SafariView`, `CachedAsyncImage`, `FlowLayout`, `PillTabBar`, `ChipPicker`, `RadioButton`, `ComboButton`, or `RepresentableSearchField`. Safe to add on day one — unused imports cost nothing.
 
 **Do not** attempt to edit `project.pbxproj` directly — that's fragile. Instead, print the exact URL and product list for the user to add in Xcode.
+
+**Design and feedback primitives ship as templates (step 3), not as package products.** Design is brand, and brand is per-app — see `_PRD/PackageMigration_PRD.md` in any existing Fanxie app repo for the rationale.
 
 ### 6. Update `.gitignore`
 
