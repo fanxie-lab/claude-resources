@@ -1,0 +1,23 @@
+# Ignore everything
+/*
+/.*
+
+!/.gitignore
+
+# Agents
+
+!/agents/
+/agents/*
+
+!/agents/prd-architect.md
+!/agents/brand-content-strategist.md
+!/agents/wordpress-development-expert.md
+!/agents/swift-ui-architect.md
+
+
+# Skills
+!/skills/
+/skills/*
+
+!/skills/new-ios-project/
+!/skills/php-lts-compat-audit/
